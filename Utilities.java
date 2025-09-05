@@ -1,8 +1,12 @@
+import java.util.Arrays;
+
 public class Utilities {
     private HW hw;
+    private GM gm;
 
     public Utilities(HW _hw) {
         hw = _hw;
+        gm = new GM(8, hw);
     }
 
     private void loadProgram(Word[] p) {
@@ -38,13 +42,17 @@ public class Utilities {
     }
 
     public void loadAndExec(Word[] p) {
-        loadProgram(p); // carga do programa na memoria
-        System.out.println("---------------------------------- programa carregado na memoria");
+        // loadProgram(p); // carga do programa na memoria
+        AllocResult ar = gm.alloc(p);
+        System.out.println("---------------------------------- programa carregado na memoria nos endereços: " + Arrays.toString(ar.frames));
         dump(0, p.length); // dump da memoria nestas posicoes
         hw.cpu.setContext(0); // seta pc para endereço 0 - ponto de entrada dos programas
         System.out.println("---------------------------------- inicia execucao ");
         hw.cpu.run(); // cpu roda programa ate parar
         System.out.println("---------------------------------- memoria após execucao ");
         dump(0, p.length); // dump da memoria com resultado
+        gm.free(ar.frames);
+        System.out.println("---------------------------------- memoria após free ");
+        dump(0, p.length);
     }
 }

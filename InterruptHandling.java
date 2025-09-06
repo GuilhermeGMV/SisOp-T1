@@ -7,7 +7,8 @@ public class InterruptHandling {
 
     public void handle(Interrupts irpt) {
         // apenas avisa - todas interrupcoes neste momento finalizam o programa
+        int pc = (hw.cpu.pcb != null) ? hw.cpu.pcb.pc : -1;
         System.out.println(
-                "                                               Interrupcao " + irpt + "   pc: " + hw.cpu.pc);
+                "                                               Interrupcao " + irpt + "   pc: " + pc);
     }
 }

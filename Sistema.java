@@ -28,7 +28,11 @@ public class Sistema {
     }
 
     public void run() {
-        so.utils.testGM(progs.retrieveProgram("fatorialV2"), progs.retrieveProgram("fatorial"), progs.retrieveProgram("fibonacci10v2"), progs.retrieveProgram("PC"), progs.retrieveProgram("progMinimo"));
+        // Inicia o sistema interativo
+        so.utils.interactiveSystem(progs);
+        
+        // Código de teste (comentado)
+        //so.utils.testGM(progs.retrieveProgram("fatorialV2"), progs.retrieveProgram("fatorial"), progs.retrieveProgram("fibonacci10v2"), progs.retrieveProgram("PC"), progs.retrieveProgram("progMinimo"));
         //so.utils.testGP(progs.retrieveProgram("fatorialV2"));
         //so.utils.loadAndExec(progs.retrieveProgram("fatorialV2"));
 

@@ -5,16 +5,16 @@ public class GP {
       so = _so;
   }
 
-  public boolean createProcess(Program p){
+  public int createProcess(Program p){
     p.tabPag = so.gm.alloc(p.image);
     if(p.tabPag == null){
       System.out.println("Erro: Falha na alocação de memória para o programa " + p.name);
-      return false;
+      return -1;
     }
     PCB pcb = new PCB(p, p.tabPag);
     so.ready.add(pcb);
     System.out.println("Processo criado com PID: " + pcb.pid + " para o programa: " + p.name);
-    return true;
+    return pcb.pid;
   }
 
   public void terminateProcess(PCB pcb){

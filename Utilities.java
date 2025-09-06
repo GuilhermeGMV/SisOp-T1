@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Utilities {
     private HW hw;
@@ -41,20 +42,20 @@ public class Utilities {
         }
     }
 
-    public void loadAndExec(Program p) {
-        // loadProgram(p); // carga do programa na memoria
-        p.tabPag = so.gm.alloc(p.image);
-        System.out.println("---------------------------------- programa carregado na memoria nos endereços: " + Arrays.toString(p.tabPag));
-        dump(0, p.image.length); // dump da memoria nestas posicoes
-        hw.cpu.setContext(0); // seta pc para endereço 0 - ponto de entrada dos programas
-        System.out.println("---------------------------------- inicia execucao ");
-        hw.cpu.run(); // cpu roda programa ate parar
-        System.out.println("---------------------------------- memoria após execucao ");
-        dump(0, p.image.length); // dump da memoria com resultado
-        so.gm.free(p.tabPag);
-        System.out.println("---------------------------------- memoria após free ");
-        dump(0, p.image.length);
-    }
+    // public void loadAndExec(Program p) {
+    //     // loadProgram(p); // carga do programa na memoria
+    //     p.tabPag = so.gm.alloc(p.image);
+    //     System.out.println("---------------------------------- programa carregado na memoria nos endereços: " + Arrays.toString(p.tabPag));
+    //     dump(0, p.image.length); // dump da memoria nestas posicoes
+    //     hw.cpu.setContext(pcb); // seta pc para endereço 0 - ponto de entrada dos programas
+    //     System.out.println("---------------------------------- inicia execucao ");
+    //     hw.cpu.run(); // cpu roda programa ate parar
+    //     System.out.println("---------------------------------- memoria após execucao ");
+    //     dump(0, p.image.length); // dump da memoria com resultado
+    //     so.gm.free(p.tabPag);
+    //     System.out.println("---------------------------------- memoria após free ");
+    //     dump(0, p.image.length);
+    // }
 
     public void testGM(Program p, Program p1, Program p2, Program p3, Program p4){
       System.out.println("---------------------------------- memoria antes ");
@@ -102,5 +103,231 @@ public class Utilities {
 
       System.out.println("---------------------------------- memoria após free ");
       dump(0, hw.mem.pos.length);
+    }
+
+    public void interactiveSystem(Programs programs) {
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
+        
+        while (running) {
+            System.out.print("SO> ");
+            String input = scanner.nextLine().trim();
+            
+            if (input.isEmpty()) continue;
+            
+            String[] parts = input.split("\\s+");
+            String command = parts[0].toLowerCase();
+            
+            switch (command) {
+                case "new":
+                    handleNewCommand(parts, programs);
+                    break;
+                case "rm":
+                    handleRmCommand(parts);
+                    break;
+                case "ps":
+                    handlePsCommand();
+                    break;
+                case "dump":
+                    handleDumpCommand(parts);
+                    break;
+                case "dumpm":
+                    handleDumpMCommand(parts);
+                    break;
+                case "exec":
+                    handleExecCommand(parts);
+                    break;
+                case "traceon":
+                    handleTraceOnCommand();
+                    break;
+                case "traceoff":
+                    handleTraceOffCommand();
+                    break;
+                case "exit":
+                    running = false;
+                    System.out.println("Sistema encerrado.");
+                    break;
+                case "help":
+                    System.out.println("=======================================");
+                    System.out.println("Comandos disponíveis:");
+                    System.out.println("  new <nomePrograma> - cria processo");
+                    System.out.println("  rm <id> - remove processo");
+                    System.out.println("  ps - lista processos");
+                    System.out.println("  dump <id> - mostra PCB e memória do processo");
+                    System.out.println("  dumpM <inicio,fim> - mostra memória entre posições");
+                    System.out.println("  exec <id> - executa processo");
+                    System.out.println("  traceOn - liga trace de execução");
+                    System.out.println("  traceOff - desliga trace de execução");
+                    System.out.println("  exit - sair do sistema");
+                    System.out.println("=======================================");
+                    break;
+                default:
+                    System.out.println("Comando inválido: " + command);
+                    break;
+            }
+        }
+        scanner.close();
+    }
+    
+    private void handleNewCommand(String[] parts, Programs programs) {
+        if (parts.length < 2) {
+            System.out.println("Uso: new <nomePrograma>");
+            return;
+        }
+        
+        String programName = parts[1];
+        Program program = programs.retrieveProgram(programName);
+        
+        if (program == null) {
+            System.out.println("Programa '" + programName + "' não encontrado.");
+            return;
+        }
+        
+        int pid = so.gp.createProcess(program);
+        if (pid == -1) {
+            System.out.println("Falha ao criar processo para '" + programName + "'.");
+        }
+    }
+    
+    private void handleRmCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Uso: rm <id>");
+            return;
+        }
+        
+        try {
+            int pid = Integer.parseInt(parts[1]);
+            if (so.gp.terminateProcessById(pid)) {
+                System.out.println("Processo " + pid + " removido com sucesso.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido: " + parts[1]);
+        }
+    }
+    
+    private void handlePsCommand() {
+        System.out.println("=== Lista de Processos ===");
+        if (so.ready.isEmpty()) {
+            System.out.println("Nenhum processo na fila de prontos.");
+        } else {
+            System.out.println("PID\tPrograma\t\tEstado");
+            System.out.println("---\t--------\t\t------");
+            for (PCB pcb : so.ready) {
+                System.out.println(pcb.pid + "\t" + pcb.program.name + "\t\tPronto");
+            }
+        }
+        
+        if (so.running != null) {
+            System.out.println(so.running.pid + "\t" + so.running.program.name + "\t\tExecutando");
+        }
+        System.out.println("==========================");
+    }
+    
+    private void handleDumpCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Uso: dump <id>");
+            return;
+        }
+        
+        try {
+            int pid = Integer.parseInt(parts[1]);
+            PCB pcb = so.findPCBById(pid);
+            
+            if (pcb == null) {
+                System.out.println("Processo com ID " + pid + " não encontrado.");
+                return;
+            }
+            
+            System.out.println("=== Dump do Processo " + pid + " ===");
+            System.out.println("PID: " + pcb.pid);
+            System.out.println("Programa: " + pcb.program.name);
+            System.out.println("PC: " + pcb.pc);
+            System.out.println("Tabela de Páginas: " + Arrays.toString(pcb.tabPag));
+            System.out.println("\n--- Memória do Processo ---");
+            
+            for (int page : pcb.tabPag) {
+                System.out.println("Página iniciando em " + page + ":");
+                dump(page, Math.min(page + so.gm.tamPag, hw.mem.pos.length));
+            }
+            System.out.println("==============================");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido: " + parts[1]);
+        }
+    }
+    
+    private void handleDumpMCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Uso: dumpM <inicio,fim>");
+            return;
+        }
+        
+        try {
+            String[] range = parts[1].split(",");
+            if (range.length != 2) {
+                System.out.println("Formato inválido. Use: dumpM <inicio,fim>");
+                return;
+            }
+            
+            int inicio = Integer.parseInt(range[0].trim());
+            int fim = Integer.parseInt(range[1].trim());
+            
+            if (inicio < 0 || fim >= hw.mem.pos.length || inicio > fim) {
+                System.out.println("Range inválido. Deve estar entre 0 e " + (hw.mem.pos.length - 1));
+                return;
+            }
+            
+            System.out.println("=== Dump da Memória [" + inicio + "," + fim + "] ===");
+            dump(inicio, fim + 1);
+            System.out.println("=====================================");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Formato inválido. Use números inteiros.");
+        }
+    }
+    
+    private void handleExecCommand(String[] parts) {
+        if (parts.length < 2) {
+            System.out.println("Uso: exec <id>");
+            return;
+        }
+        
+        try {
+            int pid = Integer.parseInt(parts[1]);
+            PCB pcb = so.findPCBById(pid);
+            
+            if (pcb == null) {
+                System.out.println("Processo com ID " + pid + " não encontrado.");
+                return;
+            }
+            
+            System.out.println("Executando processo " + pid + " (" + pcb.program.name + ")...");
+            
+            so.ready.remove(pcb);
+            so.running = pcb;
+            
+            hw.cpu.setContext(pcb);
+            
+            System.out.println("---------------------------------- inicia execucao ");
+            hw.cpu.run();
+
+            so.running = null;
+            so.gp.terminateProcess(pcb);
+            
+            System.out.println("Processo " + pid + " terminou execução.");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido: " + parts[1]);
+        }
+    }
+    
+    private void handleTraceOnCommand() {
+        hw.cpu.setDebug(true);
+        System.out.println("Trace de execução ligado.");
+    }
+    
+    private void handleTraceOffCommand() {
+        hw.cpu.setDebug(false);
+        System.out.println("Trace de execução desligado.");
     }
 }

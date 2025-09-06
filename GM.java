@@ -38,7 +38,10 @@ public class GM {
         result[i] = freeFrames.get(i);
       }
       return result;
+    } else {
+      free(freeFrames.stream().mapToInt(Integer::intValue).toArray());
     }
+
 
     return null;
   }

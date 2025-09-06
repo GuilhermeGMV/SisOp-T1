@@ -2,11 +2,11 @@ import java.util.Arrays;
 
 public class Utilities {
     private HW hw;
-    private GM gm;
+    private SO so;
 
-    public Utilities(HW _hw) {
+    public Utilities(HW _hw, SO _so) {
         hw = _hw;
-        gm = new GM(8, hw);
+        so = _so;
     }
 
     private void loadProgram(Word[] p) {
@@ -43,7 +43,7 @@ public class Utilities {
 
     public void loadAndExec(Program p) {
         // loadProgram(p); // carga do programa na memoria
-        p.tabPag = gm.alloc(p.image);
+        p.tabPag = so.gm.alloc(p.image);
         System.out.println("---------------------------------- programa carregado na memoria nos endereços: " + Arrays.toString(p.tabPag));
         dump(0, p.image.length); // dump da memoria nestas posicoes
         hw.cpu.setContext(0); // seta pc para endereço 0 - ponto de entrada dos programas
@@ -51,7 +51,7 @@ public class Utilities {
         hw.cpu.run(); // cpu roda programa ate parar
         System.out.println("---------------------------------- memoria após execucao ");
         dump(0, p.image.length); // dump da memoria com resultado
-        gm.free(p.tabPag);
+        so.gm.free(p.tabPag);
         System.out.println("---------------------------------- memoria após free ");
         dump(0, p.image.length);
     }
@@ -59,32 +59,32 @@ public class Utilities {
     public void testGM(Program p, Program p1, Program p2, Program p3, Program p4){
       System.out.println("---------------------------------- memoria antes ");
       dump(0, hw.mem.pos.length);
-      p.tabPag = gm.alloc(p.image);
+      p.tabPag = so.gm.alloc(p.image);
 
       System.out.println("---------------------------------- p carregado");
       dump(0, hw.mem.pos.length);
-      p1.tabPag = gm.alloc(p1.image);
+      p1.tabPag = so.gm.alloc(p1.image);
 
       System.out.println("---------------------------------- p1 carregado ");
       dump(0, hw.mem.pos.length);
-      p2.tabPag = gm.alloc(p2.image);
+      p2.tabPag = so.gm.alloc(p2.image);
 
       System.out.println("---------------------------------- p2 carregado");
       dump(0, hw.mem.pos.length);
-      gm.free(p1.tabPag);
+      so.gm.free(p1.tabPag);
 
       System.out.println("---------------------------------- memoria sem o p1");
       dump(0, hw.mem.pos.length);
-      p3.tabPag = gm.alloc(p3.image);
+      p3.tabPag = so.gm.alloc(p3.image);
 
       System.out.println("---------------------------------- p3 carregado");
       dump(0, hw.mem.pos.length);
-      gm.free(p.tabPag);
-      gm.free(p2.tabPag);
+      so.gm.free(p.tabPag);
+      so.gm.free(p2.tabPag);
 
       System.out.println("---------------------------------- memoria sem o p e o p2");
       dump(0, hw.mem.pos.length);
-      p4.tabPag = gm.alloc(p4.image);
+      p4.tabPag = so.gm.alloc(p4.image);
 
       System.out.println("---------------------------------- p4 carregado");
       dump(0, hw.mem.pos.length);

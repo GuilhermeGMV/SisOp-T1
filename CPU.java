@@ -61,8 +61,8 @@ public class CPU {
         return true;
     }
 
-    public void setContext(int _pc) {                 // usado para setar o contexto da cpu para rodar um processo
-                                                      // [ nesta versao é somente colocar o PC na posicao 0 ]
+    public void setContext(int _pc) {                 
+
         pc = _pc;                                     // pc cfe endereco logico
         irpt = Interrupts.noInterrupt;                // reset da interrupcao registrada
     }

@@ -1,9 +1,9 @@
 public class Programs {
 
-    public Word[] retrieveProgram(String pname) {
+    public Program retrieveProgram(String pname) {
         for (Program p : progs) {
             if (p != null && p.name.equals(pname))
-                return p.image;
+                return p;
         }
         return null;
     }

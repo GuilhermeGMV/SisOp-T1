@@ -7,14 +7,17 @@ public class GM {
     this.hw = hw;
   }
 
-  public AllocResult alloc(Word[] p){
+  public int[] alloc(Word[] p){
     Word[] m = hw.mem.pos;
 
     if (p.length > m.length) {
-      return new AllocResult(false, null);
+      return null;
     }
 
     int[] freeFrames = new int[m.length/tamPag];
+    for (int i = 0; i < freeFrames.length; i++) {
+      freeFrames[i] = -1;
+    }
     int freeCount = 0;
     int programIndex = 0;
 
@@ -36,10 +39,10 @@ public class GM {
     }
 
     if(programIndex == p.length){
-      return new AllocResult(true, freeFrames);
+      return freeFrames;
     }
 
-    return new AllocResult(false, null);
+    return null;
   }
 
   public void free(int[] tabPag){
@@ -47,7 +50,9 @@ public class GM {
 
     for(int pag : tabPag){
       for(int j = 0; j < tamPag; j++){
-        m[pag+j] = new Word(Opcode.___, -1, -1, -1);
+        if(pag>= 0){
+          m[pag+j] = new Word(Opcode.___, -1, -1, -1);
+        }
       }
       
     }

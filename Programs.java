@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Programs {
 
     public Program retrieveProgram(String pname) {
@@ -8,7 +11,7 @@ public class Programs {
         return null;
     }
 
-    public Program[] progs = {
+    public ArrayList<Program> progs = new ArrayList<>(Arrays.asList(
             new Program("fatorial",
                     new Word[] {
                             // este fatorial so aceita valores positivos. nao pode ser zero
@@ -288,5 +291,5 @@ public class Programs {
                             new Word(Opcode.DATA, -1, -1, -1),
                             new Word(Opcode.DATA, -1, -1, -1)
                     })
-    };
+    ));
 }

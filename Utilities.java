@@ -59,35 +59,48 @@ public class Utilities {
     public void testGM(Program p, Program p1, Program p2, Program p3, Program p4){
       System.out.println("---------------------------------- memoria antes ");
       dump(0, hw.mem.pos.length);
-      p.tabPag = so.gm.alloc(p.image);
+      so.gp.createProcess(p);
 
       System.out.println("---------------------------------- p carregado");
       dump(0, hw.mem.pos.length);
-      p1.tabPag = so.gm.alloc(p1.image);
+      so.gp.createProcess(p1);
 
       System.out.println("---------------------------------- p1 carregado ");
       dump(0, hw.mem.pos.length);
-      p2.tabPag = so.gm.alloc(p2.image);
+      so.gp.createProcess(p2);
 
       System.out.println("---------------------------------- p2 carregado");
       dump(0, hw.mem.pos.length);
-      so.gm.free(p1.tabPag);
+      so.gp.terminateProcessById(2);
 
       System.out.println("---------------------------------- memoria sem o p1");
       dump(0, hw.mem.pos.length);
-      p3.tabPag = so.gm.alloc(p3.image);
+      so.gp.createProcess(p3);
 
       System.out.println("---------------------------------- p3 carregado");
       dump(0, hw.mem.pos.length);
-      so.gm.free(p.tabPag);
-      so.gm.free(p2.tabPag);
+      so.gp.terminateProcessById(1);
+      so.gp.terminateProcessById(3);
 
       System.out.println("---------------------------------- memoria sem o p e o p2");
       dump(0, hw.mem.pos.length);
-      p4.tabPag = so.gm.alloc(p4.image);
+      so.gp.createProcess(p4);
 
       System.out.println("---------------------------------- p4 carregado");
       dump(0, hw.mem.pos.length);
 
+    }
+
+    void testGP(Program p){
+      System.out.println("---------------------------------- memoria antes ");
+      dump(0, hw.mem.pos.length);
+      so.gp.createProcess(p);
+
+      System.out.println("---------------------------------- p carregado");
+      dump(0, hw.mem.pos.length);
+      so.gp.terminateProcessById(1);
+
+      System.out.println("---------------------------------- memoria após free ");
+      dump(0, hw.mem.pos.length);
     }
 }

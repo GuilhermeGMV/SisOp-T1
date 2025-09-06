@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class GM {
   public int tamPag = 8; 
   public HW hw;
@@ -14,11 +16,7 @@ public class GM {
       return null;
     }
 
-    int[] freeFrames = new int[m.length/tamPag];
-    for (int i = 0; i < freeFrames.length; i++) {
-      freeFrames[i] = -1;
-    }
-    int freeCount = 0;
+    ArrayList<Integer> freeFrames = new ArrayList<>();
     int programIndex = 0;
 
     for(int i = 0; i < m.length && programIndex < p.length; i += tamPag){
@@ -30,19 +28,14 @@ public class GM {
           m[i+j].p = p[programIndex].p;
           programIndex++;
         }
-        freeFrames[freeCount] = i;
-        freeCount++;
+        freeFrames.add(i);
       }
     }
 
     if(programIndex == p.length){
-      int[] result = new int[freeCount];
-      int i = 0;
-      for(int frame : freeFrames){
-        if(frame >= 0){
-          result[i] = frame;
-          i++;
-        }
+      int[] result = new int[freeFrames.size()];
+      for(int i = 0; i < freeFrames.size(); i++){
+        result[i] = freeFrames.get(i);
       }
       return result;
     }

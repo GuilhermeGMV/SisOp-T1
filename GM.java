@@ -22,7 +22,6 @@ public class GM {
     int programIndex = 0;
 
     for(int i = 0; i < m.length && programIndex < p.length; i += tamPag){
-
       if(m[i].opc == Opcode.___){
         for(int j = 0; j < tamPag && programIndex < p.length; j++){
           m[i+j].opc = p[programIndex].opc;
@@ -31,15 +30,21 @@ public class GM {
           m[i+j].p = p[programIndex].p;
           programIndex++;
         }
-        
         freeFrames[freeCount] = i;
         freeCount++;
       }
-
     }
 
     if(programIndex == p.length){
-      return freeFrames;
+      int[] result = new int[freeCount];
+      int i = 0;
+      for(int frame : freeFrames){
+        if(frame >= 0){
+          result[i] = frame;
+          i++;
+        }
+      }
+      return result;
     }
 
     return null;
@@ -50,9 +55,7 @@ public class GM {
 
     for(int pag : tabPag){
       for(int j = 0; j < tamPag; j++){
-        if(pag>= 0){
-          m[pag+j] = new Word(Opcode.___, -1, -1, -1);
-        }
+        m[pag+j] = new Word(Opcode.___, -1, -1, -1);
       }
       
     }

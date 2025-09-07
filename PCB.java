@@ -16,5 +16,6 @@ public class PCB {
     this.pc = 0;
     this.ir = program.image[0];
     this.reg = new int[10];
+    this.irpt = Interrupts.noInterrupt;
   }
 }

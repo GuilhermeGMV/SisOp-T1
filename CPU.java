@@ -15,13 +15,15 @@ public class CPU {
     private boolean debug;
     private Utilities u;
     public final int pageSize;
+    public final int delta;
 
-    public CPU(Memory _mem, boolean _debug, int _pageSize) {
+    public CPU(Memory _mem, boolean _debug, int _pageSize, int _delta) {
         maxInt = 32767;
         minInt = -32767;
         m = _mem.pos;
         pageSize = _pageSize;
         reg = new int[10];
+        delta = _delta;
         debug = _debug;
     }
 
@@ -38,7 +40,23 @@ public class CPU {
         debug = d;
     }
 
-    private int translateAddress(int logicalAddress) {
+    public void setIR(Word ir) {
+        this.ir = ir;
+    }
+    
+    public void setIrpt(Interrupts irpt) {
+        this.irpt = irpt;
+    }
+
+    public Word getIR() {
+        return ir;
+    }
+
+    public Interrupts getIrpt() {
+        return irpt;
+    }
+
+    public int translateAddress(int logicalAddress) {
         if (pcb == null || pcb.tabPag == null) {
             return logicalAddress;
         }
@@ -74,13 +92,17 @@ public class CPU {
     }
 
     public void setContext(PCB _pcb) {
-        irpt = Interrupts.noInterrupt;
+        irpt = _pcb.irpt;
         pcb = _pcb;
+        reg = _pcb.reg;
+        ir = _pcb.ir;
     }
 
     public void run() {
+        int d = 0;
         execStop = false;
         while (!execStop) {
+            d++;
             if (legal(pcb.pc)) {
                 int physicalPC = translateAddress(pcb.pc);
                 ir = m[physicalPC];
@@ -275,9 +297,13 @@ public class CPU {
                 ih.handle(irpt);
                 execStop = true;
             }
+            if(d >= delta) {
+                ih.handle(Interrupts.intEscalonar);
+                execStop = true;
+            }
         } // FIM DO CICLO DE UMA INSTRUÇÃO
-      if (debug) {
-          System.out.println("-------------------------------- programa depois da execução");
+      if (debug && delta > d) {
+          System.out.println("-------------------------------- programa (" + pcb.program.name + ") depois da execução");
           for (int page : pcb.tabPag) {
               System.out.println("Página iniciando em " + page + ":");
               u.dump(page, Math.min(page + pageSize, m.length));

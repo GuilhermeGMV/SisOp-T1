@@ -10,7 +10,7 @@ public class SO {
     public GP gp;
 
     public SO(HW hw, int pageSize) {
-        ih = new InterruptHandling(hw); // rotinas de tratamento de int
+        ih = new InterruptHandling(hw, this); // rotinas de tratamento de int
         sc = new SysCallHandling(hw); // chamadas de sistema
         hw.cpu.setAddressOfHandlers(ih, sc);
         gm = new GM(pageSize, hw);

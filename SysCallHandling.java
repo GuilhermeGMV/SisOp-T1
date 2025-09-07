@@ -26,7 +26,13 @@ public class SysCallHandling {
                 break;
             case 2:
                 // escrita - escreve o conteuodo da memoria na posicao dada em reg[9]
-                System.out.println("OUT:   "+ hw.mem.pos[hw.cpu.reg[9]].p);
+                int logicalAddr = hw.cpu.reg[9];
+                int physicalAddr = hw.cpu.translateAddress(logicalAddr);
+                if (physicalAddr != -1) {
+                    System.out.println("OUT:   "+ hw.mem.pos[physicalAddr].p);
+                } else {
+                    System.out.println("ERRO: Endereço inválido " + logicalAddr);
+                }
                 break;
             default:
                 System.out.println("  PARAMETRO INVALIDO");

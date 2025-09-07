@@ -137,6 +137,9 @@ public class Utilities {
                 case "exec":
                     handleExecCommand(parts);
                     break;
+                case "execall":
+                    handleExecAllCommand();
+                    break;
                 case "traceon":
                     handleTraceOnCommand();
                     break;
@@ -319,6 +322,27 @@ public class Utilities {
         } catch (NumberFormatException e) {
             System.out.println("ID inválido: " + parts[1]);
         }
+    }
+
+    private void handleExecAllCommand() {
+        while (!so.ready.isEmpty()) {
+            PCB pcb = so.ready.get(0);
+            System.out.println("Executando processo " + pcb.pid + " (" + pcb.program.name + ")...");
+            
+            so.ready.remove(pcb);
+            so.running = pcb;
+            
+            hw.cpu.setContext(pcb);
+            
+            System.out.println("---------------------------------- inicia execucao ");
+            hw.cpu.run();
+
+            so.running = null;
+            so.gp.terminateProcess(pcb);
+            
+            System.out.println("Processo " + pcb.pid + " terminou execução.");
+        }
+        System.out.println("Nenhum processo na fila de prontos.");
     }
     
     private void handleTraceOnCommand() {

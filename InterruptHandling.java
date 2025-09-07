@@ -9,7 +9,7 @@ public class InterruptHandling {
 
     public void handle(Interrupts irpt) {
         switch (irpt) {
-            case intEscalonar -> {
+            case intEscalonar: 
                 if(so.continuous){ // só remove o processo em running
 
                   hw.cpu.pcb.ir = hw.cpu.getIR();
@@ -49,11 +49,11 @@ public class InterruptHandling {
                  }
 
                }
-            }
-            default -> {
+               break;
+            default:
                 int pc = (hw.cpu.pcb != null) ? hw.cpu.pcb.pc : -1;
                 System.out.println(">>> Interrupcao " + irpt + " pc: " + pc);
-            }
+                break;
         }   
     }
 }

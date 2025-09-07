@@ -1,11 +1,14 @@
 public class CPU {
     private final int maxInt;
     private final int minInt;
+    
+    // CONTEXTO da CPU
     public PCB pcb;
     private Word ir;
     public int[] reg;
     private Interrupts irpt;
-    private final Word[] m;
+    
+    private final Word[] m; // array de memória física
     private InterruptHandling ih;
     private SysCallHandling sysCall;
     private boolean execStop;

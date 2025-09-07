@@ -247,7 +247,7 @@ public class Utilities {
             
             for (int page : pcb.tabPag) {
                 System.out.println("Página iniciando em " + page + ":");
-                dump(page, Math.min(page + so.gm.tamPag, hw.mem.pos.length));
+                dump(page, Math.min(page + so.gm.pageSize, hw.mem.pos.length));
             }
             System.out.println("==============================");
             

@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public class GM {
-  public int tamPag = 8; 
+  public int pageSize = 8; 
   public HW hw;
 
   public GM(int tp, HW hw) {
-    this.tamPag = tp;
+    this.pageSize = tp;
     this.hw = hw;
   }
 
@@ -19,9 +19,9 @@ public class GM {
     ArrayList<Integer> freeFrames = new ArrayList<>();
     int programIndex = 0;
 
-    for(int i = 0; i < m.length && programIndex < p.length; i += tamPag){
+    for(int i = 0; i < m.length && programIndex < p.length; i += pageSize){
       if(m[i].opc == Opcode.___){
-        for(int j = 0; j < tamPag && programIndex < p.length; j++){
+        for(int j = 0; j < pageSize && programIndex < p.length; j++){
           m[i+j].opc = p[programIndex].opc;
           m[i+j].ra = p[programIndex].ra;
           m[i+j].rb = p[programIndex].rb;
@@ -50,7 +50,7 @@ public class GM {
     Word[] m = hw.mem.pos;
 
     for(int pag : tabPag){
-      for(int j = 0; j < tamPag; j++){
+      for(int j = 0; j < pageSize; j++){
         m[pag+j] = new Word(Opcode.___, -1, -1, -1);
       }
       

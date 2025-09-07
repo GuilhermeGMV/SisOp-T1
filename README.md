@@ -18,3 +18,5 @@ in Sistema.java (line 50) change parameters as:
 3rd parameter: delta, meaning how many instructions a program will run until it is schedulled
 
 4th parameter: continuous, true means it will run with continuous schedulling and false means programs wait the exec or execAll command to execute
+
+to change time between instructions in continuous execution change in Scheduler.java (line 55) sleep miliseconds

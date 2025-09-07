@@ -5,11 +5,16 @@ public class PCB {
   public Program program;
   public int[] tabPag;
   public int pc;
+  public Word ir;
+  public int[] reg;
+  public Interrupts irpt;
   
   public PCB(Program program, int[] tabPag){
     this.pid = nextId++;
     this.program = program;
     this.tabPag = tabPag;
     this.pc = 0;
+    this.ir = program.image[0];
+    this.reg = new int[10];
   }
 }

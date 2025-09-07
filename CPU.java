@@ -56,6 +56,10 @@ public class CPU {
         return irpt;
     }
 
+    public boolean  getDebug() {
+        return debug;
+    }
+
     public int translateAddress(int logicalAddress) {
         if (pcb == null || pcb.tabPag == null) {
             return logicalAddress;

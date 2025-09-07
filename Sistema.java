@@ -20,9 +20,9 @@ public class Sistema {
     public SO so;
     public Programs progs;
 
-    public Sistema(int tamMem, int pageSize, int delta) {
+    public Sistema(int tamMem, int pageSize, int delta, boolean continuous) {
         hw = new HW(tamMem, pageSize, delta);           // memoria do HW tem tamMem palavras
-        so = new SO(hw, pageSize);
+        so = new SO(hw, pageSize, continuous);
         hw.cpu.setUtilities(so.utils); // permite cpu fazer dump de memoria ao avancar
         progs = new Programs();
     }
@@ -30,11 +30,6 @@ public class Sistema {
     public void run() {
         // Inicia o sistema interativo
         so.utils.interactiveSystem(progs);
-        
-        // Código de teste (comentado)
-        //so.utils.testGM(progs.retrieveProgram("fatorialV2"), progs.retrieveProgram("fatorial"), progs.retrieveProgram("fibonacci10v2"), progs.retrieveProgram("PC"), progs.retrieveProgram("progMinimo"));
-        //so.utils.testGP(progs.retrieveProgram("fatorialV2"));
-        //so.utils.loadAndExec(progs.retrieveProgram("fatorialV2"));
 
         // so.utils.loadAndExec(progs.retrieveProgram("fatorial"));
         // fibonacci10,
@@ -52,7 +47,7 @@ public class Sistema {
     // -------------------------------------------------------------------------------------------------------
     // ------------------- instancia e testa sistema
     public static void main(String args[]) {
-        Sistema s = new Sistema(1024, 8, 3);
+        Sistema s = new Sistema(1024, 8, 4, true);
         s.run();
     }
 }

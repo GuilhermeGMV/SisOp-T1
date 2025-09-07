@@ -10,16 +10,6 @@ public class Utilities {
         so = _so;
     }
 
-    private void loadProgram(Word[] p) {
-        Word[] m = hw.mem.pos; // m[] é o array de posições memória do hw
-        for (int i = 0; i < p.length; i++) {
-            m[i].opc = p[i].opc;
-            m[i].ra = p[i].ra;
-            m[i].rb = p[i].rb;
-            m[i].p = p[i].p;
-        }
-    }
-
     // dump da memória
     public void dump(Word w) { // funcoes de DUMP nao existem em hardware - colocadas aqui para facilidade
         System.out.print("[ ");
@@ -42,72 +32,13 @@ public class Utilities {
         }
     }
 
-    // public void loadAndExec(Program p) {
-    //     // loadProgram(p); // carga do programa na memoria
-    //     p.tabPag = so.gm.alloc(p.image);
-    //     System.out.println("---------------------------------- programa carregado na memoria nos endereços: " + Arrays.toString(p.tabPag));
-    //     dump(0, p.image.length); // dump da memoria nestas posicoes
-    //     hw.cpu.setContext(pcb); // seta pc para endereço 0 - ponto de entrada dos programas
-    //     System.out.println("---------------------------------- inicia execucao ");
-    //     hw.cpu.run(); // cpu roda programa ate parar
-    //     System.out.println("---------------------------------- memoria após execucao ");
-    //     dump(0, p.image.length); // dump da memoria com resultado
-    //     so.gm.free(p.tabPag);
-    //     System.out.println("---------------------------------- memoria após free ");
-    //     dump(0, p.image.length);
-    // }
-
-    public void testGM(Program p, Program p1, Program p2, Program p3, Program p4){
-      System.out.println("---------------------------------- memoria antes ");
-      dump(0, hw.mem.pos.length);
-      so.gp.createProcess(p);
-
-      System.out.println("---------------------------------- p carregado");
-      dump(0, hw.mem.pos.length);
-      so.gp.createProcess(p1);
-
-      System.out.println("---------------------------------- p1 carregado ");
-      dump(0, hw.mem.pos.length);
-      so.gp.createProcess(p2);
-
-      System.out.println("---------------------------------- p2 carregado");
-      dump(0, hw.mem.pos.length);
-      so.gp.terminateProcessById(2);
-
-      System.out.println("---------------------------------- memoria sem o p1");
-      dump(0, hw.mem.pos.length);
-      so.gp.createProcess(p3);
-
-      System.out.println("---------------------------------- p3 carregado");
-      dump(0, hw.mem.pos.length);
-      so.gp.terminateProcessById(1);
-      so.gp.terminateProcessById(3);
-
-      System.out.println("---------------------------------- memoria sem o p e o p2");
-      dump(0, hw.mem.pos.length);
-      so.gp.createProcess(p4);
-
-      System.out.println("---------------------------------- p4 carregado");
-      dump(0, hw.mem.pos.length);
-
-    }
-
-    void testGP(Program p){
-      System.out.println("---------------------------------- memoria antes ");
-      dump(0, hw.mem.pos.length);
-      so.gp.createProcess(p);
-
-      System.out.println("---------------------------------- p carregado");
-      dump(0, hw.mem.pos.length);
-      so.gp.terminateProcessById(1);
-
-      System.out.println("---------------------------------- memoria após free ");
-      dump(0, hw.mem.pos.length);
-    }
-
     public void interactiveSystem(Programs programs) {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
+        
+        if(so.continuous){
+          so.startScheduler();
+        }
         
         while (running) {
             System.out.print("SO> ");
@@ -122,6 +53,9 @@ public class Utilities {
                 case "new":
                     handleNewCommand(parts, programs);
                     break;
+                case "load":
+                    handleLoadCommand(programs);
+                    break;
                 case "rm":
                     handleRmCommand(parts);
                     break;
@@ -135,9 +69,17 @@ public class Utilities {
                     handleDumpMCommand(parts);
                     break;
                 case "exec":
+                    if(so.continuous){
+                      System.out.println("Comando inválido: " + command);
+                      break;
+                    }
                     handleExecCommand(parts);
                     break;
                 case "execall":
+                    if(so.continuous){
+                      System.out.println("Comando inválido: " + command);
+                      break;
+                    }
                     handleExecAllCommand();
                     break;
                 case "traceon":
@@ -148,17 +90,23 @@ public class Utilities {
                     break;
                 case "exit":
                     running = false;
+                    if(so.continuous){
+                      so.stopScheduler();
+                    }
                     System.out.println("Sistema encerrado.");
                     break;
                 case "help":
                     System.out.println("=======================================");
                     System.out.println("Comandos disponíveis:");
-                    System.out.println("  new <nomePrograma> - cria processo");
+                    System.out.println("  new <nomePrograma> - cria processo (execução automática)");
                     System.out.println("  rm <id> - remove processo");
                     System.out.println("  ps - lista processos");
                     System.out.println("  dump <id> - mostra PCB e memória do processo");
                     System.out.println("  dumpM <inicio,fim> - mostra memória entre posições");
-                    System.out.println("  exec <id> - executa processo");
+                    if(!so.continuous) {
+                      System.out.println("  exec <id> - executa processo");
+                      System.out.println("  execAll - executa todos os processos em memória");
+                    }
                     System.out.println("  traceOn - liga trace de execução");
                     System.out.println("  traceOff - desliga trace de execução");
                     System.out.println("  exit - sair do sistema");
@@ -353,5 +301,27 @@ public class Utilities {
     private void handleTraceOffCommand() {
         hw.cpu.setDebug(false);
         System.out.println("Trace de execução desligado.");
+    }
+
+    private void handleLoadCommand(Programs programs) {
+        String[] programsNames = {
+            "fatorial",
+            "fatorialV2",
+            "progMinimo",
+            "fibonacci10",
+            "fibonacci10v2",
+            "fibonacciREAD",
+            "PB",
+            "PC",
+            "fatorial",
+            "fibonacci10"
+        };
+        for (int i = 0; i < 10; i++) {
+            Program program = programs.retrieveProgram(programsNames[i]);
+            int pid = so.gp.createProcess(program);
+            if (pid == -1) {
+                System.out.println("Falha ao criar processo para '" + programsNames[i] + "'.");
+            }
+        }
     }
 }

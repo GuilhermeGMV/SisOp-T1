@@ -8,15 +8,48 @@ public class SO {
     public ArrayList<PCB> ready;
     public GM gm;
     public GP gp;
+    public Scheduler scheduler;
+    private Thread schedulerThread;
+    private boolean systemRunning;
+    public final boolean continuous;
 
-    public SO(HW hw, int pageSize) {
-        ih = new InterruptHandling(hw, this); // rotinas de tratamento de int
-        sc = new SysCallHandling(hw); // chamadas de sistema
+    public SO(HW hw, int pageSize, boolean continuous) {
+        ih = new InterruptHandling(hw, this);
+        sc = new SysCallHandling(hw);
         hw.cpu.setAddressOfHandlers(ih, sc);
         gm = new GM(pageSize, hw);
-        ready = new ArrayList<>(); // inicializa ArrayList para PCBs
+        ready = new ArrayList<>();
         utils = new Utilities(hw, this);
         gp = new GP(this);
+        scheduler = new Scheduler(this, hw);
+        systemRunning = false;
+        this.continuous = continuous;
+    }
+    
+    public void startScheduler() {
+        if (!systemRunning) {
+            systemRunning = true;
+            schedulerThread = new Thread(scheduler);
+            schedulerThread.setName("SO-Scheduler");
+            schedulerThread.setDaemon(true);
+            schedulerThread.start();
+            System.out.println("Sistema operacional iniciado com escalonamento contínuo.");
+        }
+    }
+    
+    public void stopScheduler() {
+        if (systemRunning) {
+            systemRunning = false;
+            scheduler.stop();
+            if (schedulerThread != null) {
+                schedulerThread.interrupt();
+            }
+            System.out.println("Sistema operacional parado.");
+        }
+    }
+    
+    public boolean isSystemRunning() {
+        return systemRunning;
     }
 
     public PCB getRunning() {

@@ -11,11 +11,13 @@ public class CPU {
     private boolean execStop;
     private boolean debug;
     private Utilities u;
+    public final int pageSize;
 
-    public CPU(Memory _mem, boolean _debug) {
+    public CPU(Memory _mem, boolean _debug, int _pageSize) {
         maxInt = 32767;
         minInt = -32767;
         m = _mem.pos;
+        pageSize = _pageSize;
         reg = new int[10];
         debug = _debug;
     }
@@ -37,7 +39,6 @@ public class CPU {
         if (pcb == null || pcb.tabPag == null) {
             return logicalAddress;
         }
-        int pageSize = 8;
         int pageNumber = logicalAddress / pageSize;
         int offset = logicalAddress % pageSize;
         if (pageNumber >= pcb.tabPag.length) {

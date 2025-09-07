@@ -20,9 +20,9 @@ public class Sistema {
     public SO so;
     public Programs progs;
 
-    public Sistema(int tamMem) {
-        hw = new HW(tamMem);           // memoria do HW tem tamMem palavras
-        so = new SO(hw);
+    public Sistema(int tamMem, int pageSize) {
+        hw = new HW(tamMem, pageSize);           // memoria do HW tem tamMem palavras
+        so = new SO(hw, pageSize);
         hw.cpu.setUtilities(so.utils); // permite cpu fazer dump de memoria ao avancar
         progs = new Programs();
     }
@@ -52,7 +52,7 @@ public class Sistema {
     // -------------------------------------------------------------------------------------------------------
     // ------------------- instancia e testa sistema
     public static void main(String args[]) {
-        Sistema s = new Sistema(128);
+        Sistema s = new Sistema(1024, 8);
         s.run();
     }
 }

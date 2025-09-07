@@ -9,11 +9,11 @@ public class SO {
     public GM gm;
     public GP gp;
 
-    public SO(HW hw) {
+    public SO(HW hw, int pageSize) {
         ih = new InterruptHandling(hw); // rotinas de tratamento de int
         sc = new SysCallHandling(hw); // chamadas de sistema
         hw.cpu.setAddressOfHandlers(ih, sc);
-        gm = new GM(8, hw);
+        gm = new GM(pageSize, hw);
         ready = new ArrayList<>(); // inicializa ArrayList para PCBs
         utils = new Utilities(hw, this);
         gp = new GP(this);

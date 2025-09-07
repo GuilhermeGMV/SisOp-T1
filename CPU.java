@@ -1,7 +1,7 @@
 public class CPU {
     private final int maxInt;
     private final int minInt;
-    
+
     // CONTEXTO da CPU
     public PCB pcb;
     private Word ir;
@@ -276,5 +276,12 @@ public class CPU {
                 execStop = true;
             }
         } // FIM DO CICLO DE UMA INSTRUÇÃO
+      if (debug) {
+          System.out.println("-------------------------------- programa depois da execução");
+          for (int page : pcb.tabPag) {
+              System.out.println("Página iniciando em " + page + ":");
+              u.dump(page, Math.min(page + pageSize, m.length));
+          }
+      }
     }
 }

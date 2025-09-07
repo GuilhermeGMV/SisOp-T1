@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class SysCallHandling {
     private final HW hw; // referencia ao hw se tiver que setar algo
 
@@ -18,6 +20,9 @@ public class SysCallHandling {
         switch (hw.cpu.reg[8]) {
             case 1:
                 // leitura ...
+                Scanner scanner = new Scanner(System.in);
+                System.out.print("IN:   ");
+                hw.cpu.reg[9] = scanner.nextInt();
                 break;
             case 2:
                 // escrita - escreve o conteuodo da memoria na posicao dada em reg[9]

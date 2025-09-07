@@ -98,7 +98,8 @@ public class Utilities {
                 case "help":
                     System.out.println("=======================================");
                     System.out.println("Comandos disponíveis:");
-                    System.out.println("  new <nomePrograma> - cria processo (execução automática)");
+                    System.out.println("  new <nomePrograma> - cria processo");
+                    System.out.println("  load - cria 10 processos (para teste)");
                     System.out.println("  rm <id> - remove processo");
                     System.out.println("  ps - lista processos");
                     System.out.println("  dump <id> - mostra PCB e memória do processo");

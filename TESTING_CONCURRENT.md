@@ -19,11 +19,26 @@ The system will start in continuous mode with:
 
 ### 2. Test Commands
 
+#### **IMPORTANT: Input Handling Note**
+When a process requests input (IN operation), **only enter the number** when prompted with `IN (PID X):`.  
+Do NOT type shell commands while waiting for I/O input, as this will cause input conflicts.
+
+Wait for the `SO>` prompt before entering shell commands.
+
 #### Create processes with I/O operations:
 ```
 SO> new fibonacciREAD
+# When prompted: IN (PID 1):   5
+# (wait for SO> prompt to return)
 SO> new fatorialV2
-SO> new fibonacciREAD
+SO> new progMinimo
+```
+
+#### Create CPU-only processes (recommended for testing concurrency):
+```
+SO> new fibonacci10
+SO> new fatorial
+SO> new progMinimo
 ```
 
 #### Check process states:

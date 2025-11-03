@@ -52,8 +52,34 @@ javac *.java
 java Sistema
 
 SO> traceon
-SO> new fibonacciREAD
-SO> new fibonacciREAD
+SO> new fatorialV2      # Uses OUT (output) - works well
+SO> new fibonacci10     # CPU-only, no I/O - works well  
+SO> new progMinimo      # CPU-only - works well
 SO> ps
 # Should see processes in correct states without duplicates
 ```
+
+## Known Limitations
+
+### Scanner Conflict with System.in
+The IODevice and the Shell both use `System.in` through Scanner. In Java, when multiple threads read from `System.in`, there can be conflicts if shell commands are typed while waiting for I/O input.
+
+**Workaround:**
+1. When prompted with `IN (PID X):`, enter ONLY the number (no shell commands)
+2. Wait for the `SO>` prompt to return before entering more shell commands
+3. For testing concurrency without input conflicts, use:
+   - `fibonacci10` (CPU-only)
+   - `fatorial` (CPU-only)
+   - `progMinimo` (CPU-only)
+   - `fatorialV2` (uses OUT only, no input conflicts)
+
+**Why this happens:**
+- Shell reads from `System.in` for commands
+- IODevice reads from `System.in` for process input
+- When IODevice is waiting for input and user types shell command, Scanner gets confused
+
+**Proper solution (for future):**
+- Implement a centralized console manager
+- Use separate input channels
+- Implement a request/response queue for console I/O
+

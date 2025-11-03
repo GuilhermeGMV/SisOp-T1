@@ -62,12 +62,15 @@ public class IODevice implements Runnable {
                         so.ready.add(completedPCB);
                         
                         if (hw.cpu.getDebug()) {
-                            System.out.println("\n>>> IODevice: I/O Complete for PID " + completedPCB.pid + 
+                            System.out.println(">>> IODevice: I/O Complete for PID " + completedPCB.pid + 
                                              " - moved from BLOCKED to READY");
-                            System.out.print("SO> ");
                         }
                     }
                 }
+                
+                // Print prompt after I/O completes
+                System.out.print("SO> ");
+                System.out.flush();
                 
             } catch (InterruptedException e) {
                 if (!running) {
@@ -93,10 +96,32 @@ public class IODevice implements Runnable {
         
         switch (request.operation) {
             case 1: // IN operation
-                System.out.print("IN (PID " + request.pcb.pid + "):   ");
+                System.out.print("\nIN (PID " + request.pcb.pid + "):   ");
                 System.out.flush();
-                int inputValue = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                
+                int inputValue = 0;
+                boolean validInput = false;
+                
+                while (!validInput) {
+                    try {
+                        if (scanner.hasNextInt()) {
+                            inputValue = scanner.nextInt();
+                            scanner.nextLine(); // Consume newline
+                            validInput = true;
+                        } else {
+                            // Skip non-integer input
+                            String skipped = scanner.nextLine();
+                            System.out.println(">>> IODevice: Invalid input '" + skipped + "'. Please enter an integer.");
+                            System.out.print("IN (PID " + request.pcb.pid + "):   ");
+                            System.out.flush();
+                        }
+                    } catch (Exception e) {
+                        scanner.nextLine(); // Clear the buffer
+                        System.out.println(">>> IODevice: Error reading input. Please try again.");
+                        System.out.print("IN (PID " + request.pcb.pid + "):   ");
+                        System.out.flush();
+                    }
+                }
                 
                 // DMA: Write directly to memory
                 synchronized (hw.mem) {
@@ -108,7 +133,6 @@ public class IODevice implements Runnable {
                     System.out.println(">>> IODevice: IN completed - wrote " + inputValue + 
                                      " to address " + physicalAddr);
                 }
-                System.out.print("SO> ");
                 break;
                 
             case 2: // OUT operation
@@ -118,8 +142,7 @@ public class IODevice implements Runnable {
                     outputValue = hw.mem.pos[physicalAddr].p;
                 }
                 
-                System.out.println("OUT (PID " + request.pcb.pid + "):  " + outputValue);
-                System.out.print("SO> ");
+                System.out.println("\nOUT (PID " + request.pcb.pid + "):  " + outputValue);
                 
                 if (hw.cpu.getDebug()) {
                     System.out.println(">>> IODevice: OUT completed - read " + outputValue + 

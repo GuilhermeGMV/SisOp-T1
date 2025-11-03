@@ -17,6 +17,13 @@ public class Scheduler implements Runnable {
                 synchronized (lock) {
                     if (!so.ready.isEmpty() && so.running == null) {
                         PCB nextPCB = so.ready.remove(0);
+                        
+                        // Skip terminated processes
+                        if (nextPCB.state == ProcessState.TERMINATED) {
+                            continue;
+                        }
+                        
+                        nextPCB.state = ProcessState.RUNNING;
                         so.running = nextPCB;
 
                         if(hw.cpu.getDebug()){
@@ -33,6 +40,7 @@ public class Scheduler implements Runnable {
                                 
                                 synchronized (lock) {
                                     if (so.running != null && so.running.pid == nextPCB.pid) {
+                                        nextPCB.state = ProcessState.TERMINATED;
                                         System.out.println(">>> Processo PID: " + nextPCB.pid + " terminou execução");
                                         System.out.print("SO> ");
                                         so.gp.terminateProcess(so.running);
@@ -42,7 +50,10 @@ public class Scheduler implements Runnable {
                             } catch (Exception e) {
                                 System.err.println("Erro na execução do processo: " + e.getMessage());
                                 synchronized (lock) {
-                                  so.running = null;
+                                  if (so.running != null && so.running.pid == nextPCB.pid) {
+                                      nextPCB.state = ProcessState.TERMINATED;
+                                      so.running = null;
+                                  }
                                 }
                             }
                         });

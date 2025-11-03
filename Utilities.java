@@ -159,19 +159,37 @@ public class Utilities {
     
     private void handlePsCommand() {
         System.out.println("=== Lista de Processos ===");
-        if (so.ready.isEmpty()) {
-            System.out.println("Nenhum processo na fila de prontos.");
-        } else {
-            System.out.println("PID\tPrograma\t\tEstado");
-            System.out.println("---\t--------\t\t------");
+        System.out.println("PID\tPrograma\t\tEstado");
+        System.out.println("---\t--------\t\t------");
+        
+        boolean hasProcesses = false;
+        
+        // Show running process first
+        if (so.running != null) {
+            System.out.println(so.running.pid + "\t" + so.running.program.name + "\t\tRUNNING");
+            hasProcesses = true;
+        }
+        
+        // Show ready processes
+        synchronized (so.ready) {
             for (PCB pcb : so.ready) {
-                System.out.println(pcb.pid + "\t" + pcb.program.name + "\t\tPronto");
+                System.out.println(pcb.pid + "\t" + pcb.program.name + "\t\tREADY");
+                hasProcesses = true;
             }
         }
         
-        if (so.running != null) {
-            System.out.println(so.running.pid + "\t" + so.running.program.name + "\t\tExecutando");
+        // Show blocked processes
+        synchronized (so.blocked) {
+            for (PCB pcb : so.blocked) {
+                System.out.println(pcb.pid + "\t" + pcb.program.name + "\t\tBLOCKED");
+                hasProcesses = true;
+            }
         }
+        
+        if (!hasProcesses) {
+            System.out.println("Nenhum processo no sistema.");
+        }
+        
         System.out.println("==========================");
     }
     

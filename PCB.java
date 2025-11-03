@@ -8,6 +8,7 @@ public class PCB {
   public Word ir;
   public int[] reg;
   public Interrupts irpt;
+  public ProcessState state;
   
   public PCB(Program program, int[] tabPag){
     this.pid = nextId++;
@@ -17,5 +18,6 @@ public class PCB {
     this.ir = program.image[0];
     this.reg = new int[10];
     this.irpt = Interrupts.noInterrupt;
+    this.state = ProcessState.READY;
   }
 }

@@ -3,7 +3,7 @@
 # English
 
 ## how to clone and run
-clone: git clone https://github.com/GuilhermeGMV/SisOp-T1
+clone: git clone https://github.com/GuilhermeGMV/SisOp-T1.git
 
 compile: javac *.java
 
@@ -26,7 +26,7 @@ to change time between instructions in continuous execution change sleep milisec
 # Português
 
 ## como clonar e executar
-clonar: git clone https://github.com/GuilhermeGMV/SisOp-T1
+clonar: git clone https://github.com/GuilhermeGMV/SisOp-T1.git
 
 compilar: javac *.java
 

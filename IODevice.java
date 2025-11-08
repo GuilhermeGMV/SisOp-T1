@@ -8,7 +8,7 @@ public class IODevice implements Runnable {
     private final BlockingQueue<IORequest> ioQueue;
     private volatile boolean running;
     private final Scanner scanner;
-    private final int ioDelay; // Simulated I/O delay in milliseconds
+    private final int ioDelay;
     
     public IODevice(HW hw, SO so, int ioDelay) {
         this.hw = hw;
@@ -36,26 +36,20 @@ public class IODevice implements Runnable {
         
         while (running) {
             try {
-                // Wait for an I/O request (blocking call)
-                IORequest request = ioQueue.take();
+                IORequest request = ioQueue.take(); // fica esperando aqui
                 
                 if (hw.cpu.getDebug()) {
                     System.out.println(">>> IODevice: Processing request for PID " + request.pcb.pid + 
                                      " (operation: " + (request.operation == 1 ? "IN" : "OUT") + ")");
                 }
                 
-                // Simulate I/O delay
                 Thread.sleep(ioDelay);
                 
-                // Process the I/O operation with DMA (Direct Memory Access)
                 processIO(request);
                 
-                // Store the PCB reference before generating interrupt
                 PCB completedPCB = request.pcb;
                 
-                // Generate interrupt to signal I/O completion
                 synchronized (so) {
-                    // Move the specific process from blocked to ready
                     if (so.blocked.contains(completedPCB)) {
                         so.blocked.remove(completedPCB);
                         completedPCB.state = ProcessState.READY;
@@ -68,7 +62,6 @@ public class IODevice implements Runnable {
                     }
                 }
                 
-                // Print prompt after I/O completes
                 System.out.print("SO> ");
                 System.out.flush();
                 
@@ -95,7 +88,7 @@ public class IODevice implements Runnable {
         }
         
         switch (request.operation) {
-            case 1: // IN operation
+            case 1: // IN
                 System.out.print("\nIN (PID " + request.pcb.pid + "):   ");
                 System.out.flush();
                 
@@ -106,24 +99,22 @@ public class IODevice implements Runnable {
                     try {
                         if (scanner.hasNextInt()) {
                             inputValue = scanner.nextInt();
-                            scanner.nextLine(); // Consume newline
+                            scanner.nextLine();
                             validInput = true;
                         } else {
-                            // Skip non-integer input
                             String skipped = scanner.nextLine();
                             System.out.println(">>> IODevice: Invalid input '" + skipped + "'. Please enter an integer.");
                             System.out.print("IN (PID " + request.pcb.pid + "):   ");
                             System.out.flush();
                         }
                     } catch (Exception e) {
-                        scanner.nextLine(); // Clear the buffer
+                        scanner.nextLine(); // limpa o buffer
                         System.out.println(">>> IODevice: Error reading input. Please try again.");
                         System.out.print("IN (PID " + request.pcb.pid + "):   ");
                         System.out.flush();
                     }
                 }
                 
-                // DMA: Write directly to memory
                 synchronized (hw.mem) {
                     hw.mem.pos[physicalAddr].opc = Opcode.DATA;
                     hw.mem.pos[physicalAddr].p = inputValue;
@@ -135,8 +126,7 @@ public class IODevice implements Runnable {
                 }
                 break;
                 
-            case 2: // OUT operation
-                // DMA: Read directly from memory
+            case 2: // OUT
                 int outputValue;
                 synchronized (hw.mem) {
                     outputValue = hw.mem.pos[physicalAddr].p;

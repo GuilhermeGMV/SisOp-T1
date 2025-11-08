@@ -28,11 +28,10 @@ public class SO {
         utils = new Utilities(hw, this);
         gp = new GP(this);
         scheduler = new Scheduler(this, hw);
-        ioDevice = new IODevice(hw, this, 1000); // 1 second I/O delay
+        ioDevice = new IODevice(hw, this, 1000); // 1 segundo de delay de I/O
         systemRunning = false;
         this.continuous = continuous;
         
-        // Set references for asynchronous I/O
         sc.setSO(this);
         sc.setIODevice(ioDevice);
     }
@@ -41,13 +40,11 @@ public class SO {
         if (!systemRunning) {
             systemRunning = true;
             
-            // Start scheduler thread
             schedulerThread = new Thread(scheduler);
             schedulerThread.setName("SO-Scheduler");
             schedulerThread.setDaemon(true);
             schedulerThread.start();
             
-            // Start I/O device thread
             ioDeviceThread = new Thread(ioDevice);
             ioDeviceThread.setName("SO-IODevice");
             ioDeviceThread.setDaemon(true);

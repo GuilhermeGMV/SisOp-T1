@@ -28,20 +28,16 @@ public class SysCallHandling {
         System.out.println("SYSCALL pars:  " + hw.cpu.reg[8] + " / " + hw.cpu.reg[9]);
 
         if (so == null || ioDevice == null || !so.continuous) {
-            // Fallback to synchronous I/O if not in continuous mode
             handleSynchronous();
             return;
         }
         
-        // Asynchronous I/O handling
         PCB currentProcess = hw.cpu.pcb;
         int operation = hw.cpu.reg[8];
         int address = hw.cpu.reg[9];
         
-        // Create I/O request
         IORequest request = new IORequest(currentProcess, operation, address, 0);
         
-        // Add request to I/O device queue
         ioDevice.addRequest(request);
         
         if (hw.cpu.getDebug()) {
@@ -49,22 +45,19 @@ public class SysCallHandling {
                              " blocked for I/O (operation: " + (operation == 1 ? "IN" : "OUT") + ")");
         }
         
-        // Block the current process
         synchronized (so) {
-            // Save CPU context to PCB BEFORE blocking
-            currentProcess.pc = hw.cpu.pcb.pc; // PC already incremented by CPU
+            currentProcess.pc = hw.cpu.pcb.pc;
             currentProcess.ir = hw.cpu.getIR();
             currentProcess.reg = hw.cpu.reg.clone();
-            currentProcess.irpt = Interrupts.noInterrupt; // Clear interrupt
+            currentProcess.irpt = Interrupts.noInterrupt;
             
             currentProcess.state = ProcessState.BLOCKED;
             so.blocked.add(currentProcess);
-            
-            // Clear running process
+
             so.running = null;
         }
         
-        // Trigger scheduling interrupt to run another process
+        // escalona outro processo
         hw.cpu.setIrpt(Interrupts.intEscalonar);
     }
     

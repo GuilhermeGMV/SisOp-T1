@@ -18,7 +18,6 @@ public class Scheduler implements Runnable {
                     if (!so.ready.isEmpty() && so.running == null) {
                         PCB nextPCB = so.ready.remove(0);
                         
-                        // Skip terminated processes
                         if (nextPCB.state == ProcessState.TERMINATED) {
                             continue;
                         }

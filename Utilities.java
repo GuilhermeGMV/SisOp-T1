@@ -164,13 +164,11 @@ public class Utilities {
         
         boolean hasProcesses = false;
         
-        // Show running process first
         if (so.running != null) {
             System.out.println(so.running.pid + "\t" + so.running.program.name + "\t\tRUNNING");
             hasProcesses = true;
         }
         
-        // Show ready processes
         synchronized (so.ready) {
             for (PCB pcb : so.ready) {
                 System.out.println(pcb.pid + "\t" + pcb.program.name + "\t\tREADY");
@@ -178,7 +176,6 @@ public class Utilities {
             }
         }
         
-        // Show blocked processes
         synchronized (so.blocked) {
             for (PCB pcb : so.blocked) {
                 System.out.println(pcb.pid + "\t" + pcb.program.name + "\t\tBLOCKED");
@@ -329,17 +326,11 @@ public class Utilities {
     private void handleLoadCommand(Programs programs) {
         String[] programsNames = {
             "fatorial",
-            "fatorialV2",
-            "progMinimo",
-            "fibonacci10",
-            "fibonacci10v2",
-            "fibonacciREAD",
-            "PB",
-            "PC",
             "fatorial",
+            "progMinimo",
             "fibonacci10"
         };
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             Program program = programs.retrieveProgram(programsNames[i]);
             int pid = so.gp.createProcess(program);
             if (pid == -1) {

@@ -9,6 +9,12 @@ public class InterruptHandling {
 
     public void handle(Interrupts irpt) {
         switch (irpt) {
+            case intPageFault:
+                System.out.println();
+                System.out.println(">>> Interrupcao " + irpt);
+                handlePageFault();
+                break;
+                
             case intIOComplete:
                 handleIOComplete();
                 break;
@@ -24,9 +30,41 @@ public class InterruptHandling {
         }   
     }
     
+    private void handlePageFault() {
+        synchronized (so) {
+            if (hw.cpu.pcb != null && so.running != null) {
+                PCB currentPCB = hw.cpu.pcb;
+                
+                currentPCB.pc = hw.cpu.pcb.pc;
+                currentPCB.ir = hw.cpu.getIR();
+                currentPCB.reg = hw.cpu.reg.clone();
+                currentPCB.irpt = Interrupts.noInterrupt;
+                
+                if (currentPCB.nextPageToLoad < currentPCB.totalPages) {
+                    currentPCB.state = ProcessState.BLOCKED;
+                    so.blocked.add(currentPCB);
+                    so.running = null;
+                    
+                    if (hw.cpu.getDebug()) {
+                        System.out.println("\n>>> Page Fault: Process PID " + currentPCB.pid + 
+                                         " blocked. Loading page " + currentPCB.nextPageToLoad);
+                        System.out.print("SO> ");
+                    }
+                    
+                    PageRequest request = new PageRequest(currentPCB, currentPCB.nextPageToLoad);
+                    so.pageLoader.addRequest(request);
+                } else {
+                    System.err.println(">>> Page Fault Error: No more pages to load for PID " + currentPCB.pid);
+                    currentPCB.state = ProcessState.TERMINATED;
+                    so.gp.terminateProcess(currentPCB);
+                    so.running = null;
+                }
+            }
+        }
+    }
+    
     private void handleIOComplete() {
         synchronized (so) {
-            // Find the first blocked process and unblock it
             if (!so.blocked.isEmpty()) {
                 PCB unblockedProcess = so.blocked.remove(0);
                 unblockedProcess.state = ProcessState.READY;
@@ -43,10 +81,7 @@ public class InterruptHandling {
     
     private void handleScheduling() {
         if (so.continuous) {
-            // Save context and move to ready queue
             if (hw.cpu.pcb != null && so.running != null) {
-                // Only save if process is still running (not already blocked)
-                hw.cpu.pcb.pc = hw.cpu.pcb.pc;
                 hw.cpu.pcb.ir = hw.cpu.getIR();
                 hw.cpu.pcb.reg = hw.cpu.reg.clone();
                 hw.cpu.pcb.irpt = Interrupts.noInterrupt;
@@ -63,7 +98,6 @@ public class InterruptHandling {
                 }
             }
         } else {
-            // Sequential mode - not used in concurrent version
             hw.cpu.pcb.ir = hw.cpu.getIR();
             hw.cpu.pcb.reg = hw.cpu.reg;
             hw.cpu.pcb.irpt = hw.cpu.getIrpt();

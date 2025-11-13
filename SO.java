@@ -11,8 +11,10 @@ public class SO {
     public GP gp;
     public Scheduler scheduler;
     public IODevice ioDevice;
+    public PageLoader pageLoader;
     private Thread schedulerThread;
     private Thread ioDeviceThread;
+    private Thread pageLoaderThread;
     private boolean systemRunning;
     public final boolean continuous;
     private final HW hw;
@@ -29,6 +31,7 @@ public class SO {
         gp = new GP(this);
         scheduler = new Scheduler(this, hw);
         ioDevice = new IODevice(hw, this, 1000); // 1 segundo de delay de I/O
+        pageLoader = new PageLoader(hw, this, 1000); // 1 segundo de delay de disco
         systemRunning = false;
         this.continuous = continuous;
         
@@ -50,8 +53,13 @@ public class SO {
             ioDeviceThread.setDaemon(true);
             ioDeviceThread.start();
             
+            pageLoaderThread = new Thread(pageLoader);
+            pageLoaderThread.setName("SO-PageLoader");
+            pageLoaderThread.setDaemon(true);
+            pageLoaderThread.start();
+            
             System.out.println("Sistema operacional iniciado com escalonamento contínuo.");
-            System.out.println("Threads ativas: Scheduler, IODevice");
+            System.out.println("Threads ativas: Scheduler, IODevice, PageLoader");
         }
     }
     
@@ -69,6 +77,12 @@ public class SO {
             ioDevice.stop();
             if (ioDeviceThread != null) {
                 ioDeviceThread.interrupt();
+            }
+            
+            // Stop page loader
+            pageLoader.stop();
+            if (pageLoaderThread != null) {
+                pageLoaderThread.interrupt();
             }
             
             System.out.println("Sistema operacional parado.");

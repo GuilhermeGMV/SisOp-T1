@@ -24,12 +24,11 @@ public class Sistema {
         hw = new HW(tamMem, pageSize, delta);           // memoria do HW tem tamMem palavras
         so = new SO(hw, pageSize, continuous);
         hw.cpu.setUtilities(so.utils); // permite cpu fazer dump de memoria ao avancar
-        progs = new Programs();
     }
 
     public void run() {
         // Inicia o sistema interativo
-        so.utils.interactiveSystem(progs);
+        so.utils.interactiveSystem(hw.disco.programs);
 
         // so.utils.loadAndExec(progs.retrieveProgram("fatorial"));
         // fibonacci10,

@@ -216,8 +216,12 @@ public class Utilities {
             System.out.println("\n--- Memória do Processo ---");
             
             for (int page : pcb.tabPag) {
-                System.out.println("Página iniciando em " + page + ":");
-                dump(page, Math.min(page + so.gm.pageSize, hw.mem.pos.length));
+                if (page != -1) {  // só faz dump de páginas carregadas
+                    System.out.println("Página iniciando em " + page + ":");
+                    dump(page, Math.min(page + so.gm.pageSize, hw.mem.pos.length));
+                } else {
+                    System.out.println("Página não carregada na memória");
+                }
             }
             System.out.println("==============================");
             

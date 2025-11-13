@@ -10,7 +10,11 @@ public class PCB {
   public Interrupts irpt;
   public ProcessState state;
   
-  public PCB(Program program, int[] tabPag){
+  public int totalPages;
+  public int loadedPages;
+  public int nextPageToLoad;
+  
+  public PCB(Program program, int[] tabPag, int totalPages){
     this.pid = nextId++;
     this.program = program;
     this.tabPag = tabPag;
@@ -19,5 +23,9 @@ public class PCB {
     this.reg = new int[10];
     this.irpt = Interrupts.noInterrupt;
     this.state = ProcessState.READY;
+    
+    this.totalPages = totalPages;
+    this.loadedPages = 1;
+    this.nextPageToLoad = 1;
   }
 }

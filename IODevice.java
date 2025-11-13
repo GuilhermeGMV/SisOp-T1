@@ -158,7 +158,13 @@ public class IODevice implements Runnable {
             return -1;
         }
         
-        return pcb.tabPag[pageNumber] + offset;
+        int frameAddress = pcb.tabPag[pageNumber];
+        if (frameAddress == -1) {
+            System.err.println(">>> IODevice: Page " + pageNumber + " not loaded for PID " + pcb.pid);
+            return -1;
+        }
+        
+        return frameAddress + offset;
     }
     
     public void stop() {

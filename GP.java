@@ -6,14 +6,20 @@ public class GP {
   }
 
   public int createProcess(Program p){
-    p.tabPag = so.gm.alloc(p.image);
+    int totalPages = (int) Math.ceil((double) p.image.length / so.gm.pageSize);
+    
+    p.tabPag = so.gm.alloc(p.image, totalPages);
+    
     if(p.tabPag == null){
       System.out.println("Erro: Falha na alocação de memória para o programa " + p.name);
       return -1;
     }
-    PCB pcb = new PCB(p, p.tabPag);
+    
+    PCB pcb = new PCB(p, p.tabPag, totalPages);
     so.ready.add(pcb);
-    System.out.println("Processo criado com PID: " + pcb.pid + " para o programa: " + p.name);
+    
+    System.out.println("Processo criado com PID: " + pcb.pid + " para o programa: " + p.name + 
+                       " (Total de páginas: " + totalPages + ", Carregadas: " + pcb.loadedPages + ")");
     return pcb.pid;
   }
 

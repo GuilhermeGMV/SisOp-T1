@@ -66,11 +66,19 @@ public class CPU {
         }
         int pageNumber = logicalAddress / pageSize;
         int offset = logicalAddress % pageSize;
+        
         if (pageNumber >= pcb.tabPag.length) {
             irpt = Interrupts.intEnderecoInvalido;
             return -1;
         }
-        int physicalAddress = pcb.tabPag[pageNumber] + offset;
+        
+        int frameAddress = pcb.tabPag[pageNumber];
+        if (frameAddress == -1) {
+            irpt = Interrupts.intPageFault;
+            return -1;
+        }
+        
+        int physicalAddress = frameAddress + offset;
         return physicalAddress;
     }
 
@@ -309,8 +317,10 @@ public class CPU {
       if (debug && delta > d) {
           System.out.println("-------------------------------- programa (" + pcb.program.name + ") depois da execução");
           for (int page : pcb.tabPag) {
-              System.out.println("Página iniciando em " + page + ":");
-              u.dump(page, Math.min(page + pageSize, m.length));
+              if (page != -1) {
+                  System.out.println("Página iniciando em " + page + ":");
+                  u.dump(page, Math.min(page + pageSize, m.length));
+              }
           }
       }
     }

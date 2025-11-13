@@ -20,8 +20,8 @@ public class PageLoader implements Runnable {
         try {
             requestQueue.put(request);
             if (hw.cpu.getDebug()) {
-                System.out.println(">>> PageLoader: Request added for PID " + request.pcb.pid + 
-                                 " (Page " + request.pageNumber + ")");
+                System.out.println(">>> PageLoader: Requisição adicionada para PID " + request.pcb.pid + 
+                                 " (Página " + request.pageNumber + ")");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -30,15 +30,15 @@ public class PageLoader implements Runnable {
     
     @Override
     public void run() {
-        System.out.println(">>> PageLoader: Started");
+        System.out.println(">>> PageLoader: Iniciado");
         
         while (running) {
             try {
                 PageRequest request = requestQueue.take(); // espera por uma requisição
                 
                 if (hw.cpu.getDebug()) {
-                    System.out.println(">>> PageLoader: Loading page " + request.pageNumber + 
-                                     " for PID " + request.pcb.pid);
+                    System.out.println(">>> PageLoader: Carregando página " + request.pageNumber + 
+                                     " para PID " + request.pcb.pid);
                     System.out.print("SO> ");
                 }
                 
@@ -56,24 +56,29 @@ public class PageLoader implements Runnable {
                         request.pcb.nextPageToLoad++;
                         
                         if (hw.cpu.getDebug()) {
-                            System.out.println(">>> PageLoader: Page " + request.pageNumber + 
-                                             " loaded at frame " + frameAddress + 
-                                             " for PID " + request.pcb.pid);
+                            System.out.println(">>> PageLoader: Página " + request.pageNumber + 
+                                             " carregada no frame " + frameAddress + 
+                                             " para PID " + request.pcb.pid);
                         }
                         
                         if (so.blocked.contains(request.pcb)) {
                             so.blocked.remove(request.pcb);
+                            ProcessState oldState = request.pcb.state;
                             request.pcb.state = ProcessState.READY;
                             so.ready.add(request.pcb);
                             
+                            so.logger.logStateChange(request.pcb, "Fim Page Fault (pág " + request.pageNumber + " carregada)", 
+                                                    oldState, ProcessState.READY);
+                            
                             if (hw.cpu.getDebug()) {
-                                System.out.println(">>> PageLoader: Process PID " + request.pcb.pid + 
-                                                 " moved from BLOCKED to READY");
+                                System.out.println(">>> PageLoader: Processo PID " + request.pcb.pid + 
+                                                 " movido de BLOCKED para READY");
+                                so.utils.handlePsCommand();
                             }
                         }
                     } else {
-                        System.err.println(">>> PageLoader: Failed to load page " + request.pageNumber + 
-                                         " for PID " + request.pcb.pid);
+                        System.err.println(">>> PageLoader: Falha ao carregar página " + request.pageNumber + 
+                                         " para PID " + request.pcb.pid);
                     }
                 }
                 
@@ -86,12 +91,12 @@ public class PageLoader implements Runnable {
                 }
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                System.err.println(">>> PageLoader: Error - " + e.getMessage());
+                System.err.println(">>> PageLoader: Erro - " + e.getMessage());
                 e.printStackTrace();
             }
         }
         
-        System.out.println(">>> PageLoader: Stopped");
+        System.out.println(">>> PageLoader: Parado");
     }
     
     public void stop() {

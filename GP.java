@@ -16,6 +16,9 @@ public class GP {
     }
     
     PCB pcb = new PCB(p, p.tabPag, totalPages);
+    
+    so.logger.logStateChange(pcb, "Criação do processo", null, ProcessState.READY);
+    
     so.ready.add(pcb);
     
     System.out.println("Processo criado com PID: " + pcb.pid + " para o programa: " + p.name + 
@@ -28,7 +31,12 @@ public class GP {
         System.out.println("Erro: PCB é nulo, não é possível terminar o processo.");
         return;
     }
-    so.gm.free(pcb.tabPag);
+    
+    ProcessState oldState = pcb.state;
+    pcb.state = ProcessState.TERMINATED;
+    so.logger.logStateChange(pcb, "Término do processo", oldState, ProcessState.TERMINATED);
+    
+    so.gm.freeWithoutClear(pcb.tabPag);
     so.ready.remove(pcb);
   }
 

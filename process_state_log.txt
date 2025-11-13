@@ -1,0 +1,103 @@
+======================================================================================================================================================
+LOG DE MUDANÇAS DE ESTADO DOS PROCESSOS
+Formato: [Tempo] PID | Nome | Razão | Estado Inicial -> Próximo Estado | Tabela de Páginas
+======================================================================================================================================================
+
+[21:56:15.155] PID: 1   | fatorialV2      | Criação do processo  | nulo       -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:_,loc:_], [pag:2,frame:_,loc:_] }
+[21:56:15.167] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:_,loc:_], [pag:2,frame:_,loc:_] }
+[21:56:15.176] PID: 2   | progMinimo      | Criação do processo  | nulo       -> READY      | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:_,loc:_] }
+[21:56:15.176] PID: 3   | fibonacci10     | Criação do processo  | nulo       -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:_,loc:_], [pag:2,frame:_,loc:_], [pag:3,frame:_,loc:_] }
+[21:56:15.179] PID: 1   | fatorialV2      | Page Fault (carregando pág 1) | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:_,loc:_], [pag:2,frame:_,loc:_] }
+[21:56:15.230] PID: 2   | progMinimo      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:_,loc:_] }
+[21:56:15.232] PID: 2   | progMinimo      | Page Fault (carregando pág 1) | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:_,loc:_] }
+[21:56:15.294] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:_,loc:_], [pag:2,frame:_,loc:_], [pag:3,frame:_,loc:_] }
+[21:56:15.296] PID: 3   | fibonacci10     | Page Fault (carregando pág 1) | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:_,loc:_], [pag:2,frame:_,loc:_], [pag:3,frame:_,loc:_] }
+[21:56:15.394] PID: 1   | fatorialV2      | Fim Page Fault (pág 1 carregada) | BLOCKED    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:_,loc:_] }
+[21:56:15.421] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:_,loc:_] }
+[21:56:15.427] PID: 1   | fatorialV2      | Page Fault (carregando pág 2) | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:_,loc:_] }
+[21:56:15.596] PID: 2   | progMinimo      | Fim Page Fault (pág 1 carregada) | BLOCKED    -> READY      | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:32,loc:mp] }
+[21:56:15.612] PID: 2   | progMinimo      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:32,loc:mp] }
+[21:56:15.616] PID: 2   | progMinimo      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:32,loc:mp] }
+[21:56:15.676] PID: 2   | progMinimo      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:32,loc:mp] }
+[21:56:15.682] PID: 2   | progMinimo      | Término do processo  | TERMINATED -> TERMINATED | TabPag: { [pag:0,frame:8,loc:mp], [pag:1,frame:32,loc:mp] }
+[21:56:15.802] PID: 3   | fibonacci10     | Fim Page Fault (pág 1 carregada) | BLOCKED    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:_,loc:_], [pag:3,frame:_,loc:_] }
+[21:56:15.866] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:_,loc:_], [pag:3,frame:_,loc:_] }
+[21:56:15.867] PID: 3   | fibonacci10     | Page Fault (carregando pág 2) | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:_,loc:_], [pag:3,frame:_,loc:_] }
+[21:56:16.009] PID: 1   | fatorialV2      | Fim Page Fault (pág 2 carregada) | BLOCKED    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.056] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.060] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.119] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.122] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.183] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.186] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.215] PID: 3   | fibonacci10     | Fim Page Fault (pág 2 carregada) | BLOCKED    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.247] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.250] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.311] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.314] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.374] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.377] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.438] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.440] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.501] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.504] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.563] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.565] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.626] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.628] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.689] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.691] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.752] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.755] PID: 1   | fatorialV2      | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.815] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.818] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.878] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.880] PID: 1   | fatorialV2      | I/O bloqueado (OUT)  | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:16.941] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:16.944] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:17.004] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:17.008] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:17.068] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:17.072] PID: 3   | fibonacci10     | Page Fault (carregando pág 3) | RUNNING    -> BLOCKED    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:_,loc:_] }
+[21:56:17.084] PID: 1   | fatorialV2      | I/O Completo (OUT)   | BLOCKED    -> READY      | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:17.132] PID: 1   | fatorialV2      | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:17.151] PID: 1   | fatorialV2      | Término do processo  | TERMINATED -> TERMINATED | TabPag: { [pag:0,frame:0,loc:mp], [pag:1,frame:24,loc:mp], [pag:2,frame:48,loc:mp] }
+[21:56:17.275] PID: 3   | fibonacci10     | Fim Page Fault (pág 3 carregada) | BLOCKED    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.323] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.326] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.387] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.390] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.450] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.453] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.514] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.517] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.576] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.579] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.638] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.640] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.701] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.704] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.765] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.768] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.828] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.831] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.890] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.893] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.953] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:17.956] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.017] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.020] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.079] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.082] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.142] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.145] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.206] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.209] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.270] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.273] PID: 3   | fibonacci10     | Fatia de tempo esgotada | RUNNING    -> READY      | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.332] PID: 3   | fibonacci10     | Escalonamento        | READY      -> RUNNING    | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+[21:56:18.343] PID: 3   | fibonacci10     | Término do processo  | TERMINATED -> TERMINATED | TabPag: { [pag:0,frame:16,loc:mp], [pag:1,frame:40,loc:mp], [pag:2,frame:56,loc:mp], [pag:3,frame:64,loc:mp] }
+
+======================================================================================================================================================
+FIM DO LOG
+======================================================================================================================================================

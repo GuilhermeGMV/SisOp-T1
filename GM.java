@@ -121,4 +121,12 @@ public class GM {
     }
   }
 
+  public void freeWithoutClear(int[] tabPag){
+    for(int pag : tabPag){
+      if(pag != -1){
+        frameQueue.remove(pag);
+      }
+    }
+  }
+
 }

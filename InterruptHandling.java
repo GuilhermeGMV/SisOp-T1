@@ -41,20 +41,25 @@ public class InterruptHandling {
                 currentPCB.irpt = Interrupts.noInterrupt;
                 
                 if (currentPCB.nextPageToLoad < currentPCB.totalPages) {
+                    ProcessState oldState = currentPCB.state;
                     currentPCB.state = ProcessState.BLOCKED;
                     so.blocked.add(currentPCB);
                     so.running = null;
                     
+                    // Registra o page fault no log
+                    so.logger.logStateChange(currentPCB, "Page Fault (carregando pág " + currentPCB.nextPageToLoad + ")", oldState, ProcessState.BLOCKED);
+                    
                     if (hw.cpu.getDebug()) {
-                        System.out.println("\n>>> Page Fault: Process PID " + currentPCB.pid + 
-                                         " blocked. Loading page " + currentPCB.nextPageToLoad);
+                        System.out.println("\n>>> Page Fault: Processo PID " + currentPCB.pid + 
+                                         " bloqueado. Carregando página " + currentPCB.nextPageToLoad);
+                        so.utils.handlePsCommand();
                         System.out.print("SO> ");
                     }
                     
                     PageRequest request = new PageRequest(currentPCB, currentPCB.nextPageToLoad);
                     so.pageLoader.addRequest(request);
                 } else {
-                    System.err.println(">>> Page Fault Error: No more pages to load for PID " + currentPCB.pid);
+                    System.err.println(">>> Erro Page Fault: Sem mais páginas para carregar para PID " + currentPCB.pid);
                     currentPCB.state = ProcessState.TERMINATED;
                     so.gp.terminateProcess(currentPCB);
                     so.running = null;
@@ -67,12 +72,15 @@ public class InterruptHandling {
         synchronized (so) {
             if (!so.blocked.isEmpty()) {
                 PCB unblockedProcess = so.blocked.remove(0);
+                ProcessState oldState = unblockedProcess.state;
                 unblockedProcess.state = ProcessState.READY;
                 so.ready.add(unblockedProcess);
                 
+                so.logger.logStateChange(unblockedProcess, "I/O Completo", oldState, ProcessState.READY);
+                
                 if (hw.cpu.getDebug()) {
-                    System.out.println("\n>>> I/O Complete: Process PID " + unblockedProcess.pid + 
-                                     " moved from BLOCKED to READY");
+                    System.out.println("\n>>> I/O Completo: Processo PID " + unblockedProcess.pid + 
+                                     " movido de BLOCKED para READY");
                     System.out.print("SO> ");
                 }
             }
@@ -87,8 +95,12 @@ public class InterruptHandling {
                 hw.cpu.pcb.irpt = Interrupts.noInterrupt;
                 
                 synchronized (so.scheduler.getLock()) {
+                    ProcessState oldState = hw.cpu.pcb.state;
                     hw.cpu.pcb.state = ProcessState.READY;
                     so.ready.add(hw.cpu.pcb);
+                    
+                    so.logger.logStateChange(hw.cpu.pcb, "Fatia de tempo esgotada", oldState, ProcessState.READY);
+                    
                     so.running = null;
                 }
                 

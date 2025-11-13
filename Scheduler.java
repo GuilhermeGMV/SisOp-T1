@@ -22,8 +22,11 @@ public class Scheduler implements Runnable {
                             continue;
                         }
                         
+                        ProcessState oldState = nextPCB.state;
                         nextPCB.state = ProcessState.RUNNING;
                         so.running = nextPCB;
+                        
+                        so.logger.logStateChange(nextPCB, "Escalonamento", oldState, ProcessState.RUNNING);
 
                         if(hw.cpu.getDebug()){
                           System.out.println("\n>>> Escalonando processo PID: " + nextPCB.pid + " (" + nextPCB.program.name + ")");

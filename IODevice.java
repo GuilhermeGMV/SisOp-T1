@@ -23,7 +23,7 @@ public class IODevice implements Runnable {
         try {
             ioQueue.put(request);
             if (hw.cpu.getDebug()) {
-                System.out.println(">>> IODevice: Request added to queue for PID " + request.pcb.pid);
+                System.out.println(">>> IODevice: Requisição adicionada à fila para PID " + request.pcb.pid);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -32,15 +32,15 @@ public class IODevice implements Runnable {
     
     @Override
     public void run() {
-        System.out.println(">>> IODevice: Started");
+        System.out.println(">>> IODevice: Iniciado");
         
         while (running) {
             try {
                 IORequest request = ioQueue.take(); // fica esperando aqui
                 
                 if (hw.cpu.getDebug()) {
-                    System.out.println(">>> IODevice: Processing request for PID " + request.pcb.pid + 
-                                     " (operation: " + (request.operation == 1 ? "IN" : "OUT") + ")");
+                    System.out.println(">>> IODevice: Processando requisição para PID " + request.pcb.pid + 
+                                     " (operação: " + (request.operation == 1 ? "IN" : "OUT") + ")");
                 }
                 
                 Thread.sleep(ioDelay);
@@ -52,12 +52,17 @@ public class IODevice implements Runnable {
                 synchronized (so) {
                     if (so.blocked.contains(completedPCB)) {
                         so.blocked.remove(completedPCB);
+                        ProcessState oldState = completedPCB.state;
                         completedPCB.state = ProcessState.READY;
                         so.ready.add(completedPCB);
                         
+                        String operation = request.operation == 1 ? "IN" : "OUT";
+                        so.logger.logStateChange(completedPCB, "I/O Completo (" + operation + ")", 
+                                                oldState, ProcessState.READY);
+                        
                         if (hw.cpu.getDebug()) {
-                            System.out.println(">>> IODevice: I/O Complete for PID " + completedPCB.pid + 
-                                             " - moved from BLOCKED to READY");
+                            System.out.println(">>> IODevice: I/O Completo para PID " + completedPCB.pid + 
+                                             " - movido de BLOCKED para READY");
                         }
                     }
                 }
@@ -71,19 +76,19 @@ public class IODevice implements Runnable {
                 }
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                System.err.println(">>> IODevice: Error processing request - " + e.getMessage());
+                System.err.println(">>> IODevice: Erro ao processar requisição - " + e.getMessage());
                 e.printStackTrace();
             }
         }
         
-        System.out.println(">>> IODevice: Stopped");
+        System.out.println(">>> IODevice: Parado");
     }
     
     private void processIO(IORequest request) {
         int physicalAddr = translateAddress(request.pcb, request.address);
         
         if (physicalAddr == -1) {
-            System.err.println(">>> IODevice: Invalid address for PID " + request.pcb.pid);
+            System.err.println(">>> IODevice: Endereço inválido para PID " + request.pcb.pid);
             return;
         }
         
@@ -103,13 +108,13 @@ public class IODevice implements Runnable {
                             validInput = true;
                         } else {
                             String skipped = scanner.nextLine();
-                            System.out.println(">>> IODevice: Invalid input '" + skipped + "'. Please enter an integer.");
+                            System.out.println(">>> IODevice: Entrada inválida '" + skipped + "'. Por favor, digite um número inteiro.");
                             System.out.print("IN (PID " + request.pcb.pid + "):   ");
                             System.out.flush();
                         }
                     } catch (Exception e) {
                         scanner.nextLine(); // limpa o buffer
-                        System.out.println(">>> IODevice: Error reading input. Please try again.");
+                        System.out.println(">>> IODevice: Erro ao ler entrada. Por favor, tente novamente.");
                         System.out.print("IN (PID " + request.pcb.pid + "):   ");
                         System.out.flush();
                     }
@@ -121,8 +126,8 @@ public class IODevice implements Runnable {
                 }
                 
                 if (hw.cpu.getDebug()) {
-                    System.out.println(">>> IODevice: IN completed - wrote " + inputValue + 
-                                     " to address " + physicalAddr);
+                    System.out.println(">>> IODevice: IN concluído - escreveu " + inputValue + 
+                                     " no endereço " + physicalAddr);
                 }
                 break;
                 
@@ -135,13 +140,13 @@ public class IODevice implements Runnable {
                 System.out.println("\nOUT (PID " + request.pcb.pid + "):  " + outputValue);
                 
                 if (hw.cpu.getDebug()) {
-                    System.out.println(">>> IODevice: OUT completed - read " + outputValue + 
-                                     " from address " + physicalAddr);
+                    System.out.println(">>> IODevice: OUT concluído - leu " + outputValue + 
+                                     " do endereço " + physicalAddr);
                 }
                 break;
                 
             default:
-                System.err.println(">>> IODevice: Invalid operation " + request.operation);
+                System.err.println(">>> IODevice: Operação inválida " + request.operation);
                 break;
         }
     }
@@ -160,7 +165,7 @@ public class IODevice implements Runnable {
         
         int frameAddress = pcb.tabPag[pageNumber];
         if (frameAddress == -1) {
-            System.err.println(">>> IODevice: Page " + pageNumber + " not loaded for PID " + pcb.pid);
+            System.err.println(">>> IODevice: Página " + pageNumber + " não carregada para PID " + pcb.pid);
             return -1;
         }
         

@@ -157,7 +157,7 @@ public class Utilities {
         }
     }
     
-    private void handlePsCommand() {
+    public void handlePsCommand() {
         System.out.println("=== Lista de Processos ===");
         System.out.println("PID\tPrograma\t\tEstado");
         System.out.println("---\t--------\t\t------");
@@ -325,12 +325,11 @@ public class Utilities {
 
     private void handleLoadCommand(Programs programs) {
         String[] programsNames = {
-            "fatorial",
-            "fatorial",
+            "fatorialV2",
             "progMinimo",
             "fibonacci10"
         };
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             Program program = programs.retrieveProgram(programsNames[i]);
             int pid = so.gp.createProcess(program);
             if (pid == -1) {

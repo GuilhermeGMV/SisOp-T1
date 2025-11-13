@@ -12,6 +12,7 @@ public class SO {
     public Scheduler scheduler;
     public IODevice ioDevice;
     public PageLoader pageLoader;
+    public ProcessLogger logger;
     private Thread schedulerThread;
     private Thread ioDeviceThread;
     private Thread pageLoaderThread;
@@ -21,6 +22,7 @@ public class SO {
 
     public SO(HW hw, int pageSize, boolean continuous) {
         this.hw = hw;
+        logger = new ProcessLogger("process_state_log.txt");
         ih = new InterruptHandling(hw, this);
         sc = new SysCallHandling(hw);
         hw.cpu.setAddressOfHandlers(ih, sc);
@@ -30,8 +32,8 @@ public class SO {
         utils = new Utilities(hw, this);
         gp = new GP(this);
         scheduler = new Scheduler(this, hw);
-        ioDevice = new IODevice(hw, this, 1000); // 1 segundo de delay de I/O
-        pageLoader = new PageLoader(hw, this, 1000); // 1 segundo de delay de disco
+        ioDevice = new IODevice(hw, this, 200); // 200 ms de delay de I/O
+        pageLoader = new PageLoader(hw, this, 200); // 200 ms de delay de disco
         systemRunning = false;
         this.continuous = continuous;
         
@@ -83,6 +85,11 @@ public class SO {
             pageLoader.stop();
             if (pageLoaderThread != null) {
                 pageLoaderThread.interrupt();
+            }
+            
+            // Fechar o logger
+            if (logger != null) {
+                logger.close();
             }
             
             System.out.println("Sistema operacional parado.");

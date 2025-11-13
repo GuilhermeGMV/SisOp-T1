@@ -51,8 +51,13 @@ public class SysCallHandling {
             currentProcess.reg = hw.cpu.reg.clone();
             currentProcess.irpt = Interrupts.noInterrupt;
             
+            ProcessState oldState = currentProcess.state;
             currentProcess.state = ProcessState.BLOCKED;
             so.blocked.add(currentProcess);
+            
+            String ioOp = (hw.cpu.reg[8] == 1) ? "IN" : "OUT";
+            so.logger.logStateChange(currentProcess, "I/O bloqueado (" + ioOp + ")", 
+                                    oldState, ProcessState.BLOCKED);
 
             so.running = null;
         }
